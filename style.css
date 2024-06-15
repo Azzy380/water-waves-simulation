@@ -1,0 +1,201 @@
+/* Define CSS variables for easy theming */
+:root {
+    --background-color: #f7f9fc;
+    --text-color: #333;
+    --control-background: #ffffff;
+    --control-shadow: rgba(0, 0, 0, 0.1);
+    --button-background: #007bff;
+    --button-hover: #0056b3;
+    --canvas-border: #007bff;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    transition: background-color 0.3s, color 0.3s;
+    padding: 10px; /* Added padding for small screens */
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    background-color: var(--control-background);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px var(--control-shadow);
+    margin: 20px;
+    max-width: 100%;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.control {
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%; /* Full width on small screens */
+    max-width: 200px; /* Max width for larger screens */
+}
+
+.control label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: var(--text-color);
+    text-align: center; /* Center labels for small screens */
+}
+
+.control input[type="range"] {
+    width: 100%; /* Full width input for small screens */
+    accent-color: var(--button-background);
+}
+
+/* Base button styles */
+.control button {
+    padding: 10px 20px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--button-background);
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    width: 100%; /* Full width buttons on small screens */
+    max-width: 200px; /* Max width for larger screens */
+    height: 50px; /* Fixed height for consistent layout */
+}
+
+#drawObstacles, #drawWaves {
+    display: block; /* Ensure buttons are block elements for consistency */
+    visibility: visible; /* Make sure both are initially visible */
+}
+
+/* Use classes to control visibility while maintaining layout space */
+.hidden {
+    visibility: hidden;
+    display: none;
+}
+
+.visible {
+    visibility: visible;
+    display: block;
+}
+
+.control button:hover {
+    background-color: var(--button-hover);
+}
+
+canvas {
+    border: 2px solid var(--canvas-border);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px var(--control-shadow);
+    width: 100%; /* Full width on small screens */
+    max-width: 100%; /* Max width to fit parent */
+    height: 50vh; /* Responsive height */
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Dark mode styles */
+body.dark-mode {
+    --background-color: #1e1e1e;
+    --text-color: #f1f1f1;
+    --control-background: #2c2c2c;
+    --control-shadow: rgba(255, 255, 255, 0.1);
+    --button-background: #4a90e2;
+    --button-hover: #357ab8;
+    --canvas-border: #4a90e2;
+}
+
+/* Toggle switch styling for dark mode */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    margin-top: 10px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--button-background);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Mode label styling for better visibility */
+.mode-label {
+    margin-top: 10px;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+/* Responsive Design: Adjustments for small screens */
+@media (max-width: 600px) {
+    .controls {
+        display: grid; /* Use grid layout */
+        grid-template-columns: repeat(2, 1fr); /* Two columns */
+        gap: 10px; /* Space between grid items */
+        align-items: center;
+        padding: 10px;
+    }
+
+    .control {
+        margin: 5px 0; /* Reduce margin between controls */
+        max-width: none; /* Remove max-width constraint */
+        width: calc(100% - 20px); /* Make controls nearly full width */
+    }
+
+    .control input[type="range"],
+    .control button {
+        width: 100%; /* Full width for range inputs and buttons */
+    }
+
+    .control.button {
+        grid-column: span 2; /* Buttons span two columns */
+    }
+
+    canvas {
+        height: 40vh; /* Reduce canvas height for small screens */
+        margin-top: 20px; /* Add space above canvas */
+        grid-column: span 2; /* Canvas spans two columns */
+    }
+}

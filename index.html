@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Wave Simulation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="controls">
+        <div class="control">
+            <label for="dampingRange">Damping:</label>
+            <input type="range" id="dampingRange" min="0.90" max="1.00" step="0.01" value="0.99">
+        </div>
+        <div class="control">
+            <label for="resolutionRange">Grid Resolution:</label>
+            <input type="range" id="resolutionRange" min="50" max="300" step="10" value="200">
+        </div>
+        <div class="control">
+            <label for="speedRange">Speed:</label>
+            <input type="range" id="speedRange" min="1" max="10" step="1" value="1">
+        </div>
+        <div class="control">
+            <label for="heightRange">Wave Height:</label>
+            <input type="range" id="heightRange" min="0.1" max="15.0" step="0.1" value="3">
+        </div>
+        <div class="control">
+            <label for="amplitudeRange">Wave Source Amplitude:</label>
+            <input type="range" id="amplitudeRange" min="0.1" max="2.0" step="0.1" value="1">
+        </div>
+        <div class="control">
+            <label for="frequencyRange">Wave Source Frequency:</label>
+            <input type="range" id="frequencyRange" min="0.1" max="10.0" step="0.1" value="2">
+        </div>
+        <div class="control">
+            <button id="drawObstacles" class="visible">Draw Obstacles</button>
+        </div>
+        <div class="control">
+            <button id="addWaveSource" class="visible">Add Wave Source</button>
+        </div>
+        <div class="control">
+            <label for="obstacleSizeRange">Obstacle Size:</label>
+            <input type="range" id="obstacleSizeRange" min="1" max="10" step="1" value="1">
+        </div>
+        <!-- Dark mode toggle switch -->
+        <div class="control">
+            <label class="switch">
+                <input type="checkbox" id="darkModeToggle">
+                <span class="slider"></span>
+            </label>
+            <label for="darkModeToggle" class="mode-label">Dark Mode</label>
+        </div>
+    </div>
+    <canvas id="waterCanvas"></canvas>
+    <script type="module" src="js/Main.js"></script>
+    <script>
+        // JavaScript to toggle dark mode
+        const toggle = document.getElementById('darkModeToggle');
+        toggle.addEventListener('change', () => {
+            document.body.classList.toggle('dark-mode', toggle.checked);
+        });
+    </script>
+</body>
+</html>
