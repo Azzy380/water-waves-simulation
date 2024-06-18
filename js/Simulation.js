@@ -14,9 +14,6 @@ export class Simulation {
         this.rows = parseInt(document.getElementById('resolutionRange').value);
         this.damping = parseFloat(document.getElementById('dampingRange').value);
         
-        // Create the grid that will hold the wave data
-        this.grid = new Grid(this.cols, this.rows, this.damping);
-        
         // Initialize arrays to hold wave sources and other state variables
         this.waveSources = [];
         this.drawMode = 'waves';
@@ -25,7 +22,6 @@ export class Simulation {
         this.selectedSource = null;
         this.speed = parseInt(document.getElementById('speedRange').value);
         this.maxHeight = parseFloat(document.getElementById('heightRange').value);
-        this.originalButtonId = null;
         
         // Setup the canvas size and event listeners
         this.initializeCanvas();
@@ -33,11 +29,19 @@ export class Simulation {
         // Start the animation loop
         this.animate();
     }
-
     // Method to initialize canvas dimensions based on window size
     initializeCanvas() {
         this.canvas.width = window.innerWidth * 0.8;
         this.canvas.height = window.innerHeight * 0.6;
+        this.initializeGrid();
+    }
+    initializeGrid() {
+        // Make sure grid is made of squares
+   					const aspectRatio = this.canvas.width / this.canvas.height; 
+        this.rows = Math.round(this.cols / aspectRatio);
+        
+        // Create the grid that will hold the wave data
+        this.grid = new Grid(this.cols, this.rows, this.damping); 
     }
 
     // Method to add various event listeners for user interactions
@@ -73,11 +77,11 @@ export class Simulation {
                 } else if (this.drawMode === 'waveSource') {
                     const amplitude = parseFloat(document.getElementById('amplitudeRange').value);
                     const frequency = parseFloat(document.getElementById('frequencyRange').value);
-                    this.waveSources.push(new WaveSource(x, y, amplitude, frequency));
+                    const newSource = new WaveSource(x, y, amplitude, frequency);
+                    this.waveSources.push(newSource);
+                    this.updateWaveSourceSelect();
                     this.switchToDrawMode('waves');
                     this.restoreButtons();
-                } else if (this.drawMode === 'selectSource') {
-                    this.selectedSource = this.waveSources.find(source => Math.hypot(source.x - x, source.y - y) < 5);
                 }
             }
         });
@@ -91,7 +95,7 @@ export class Simulation {
         document.getElementById('resolutionRange').addEventListener('input', (event) => {
             this.cols = parseInt(event.target.value);
             this.rows = parseInt(event.target.value);
-            this.grid = new Grid(this.cols, this.rows, this.damping);
+            this.initializeGrid();
         });
 
         document.getElementById('speedRange').addEventListener('input', (event) => {
@@ -127,6 +131,25 @@ export class Simulation {
             this.switchToDrawMode('waveSource');
             this.replaceButton('addWaveSource');
         });
+
+        document.getElementById('waveSourceSelect').addEventListener('change', (event) => {
+            const selectedIndex = event.target.value;
+            this.selectedSource = this.waveSources[selectedIndex];
+            document.getElementById('amplitudeRange').value = this.selectedSource.amplitude;
+            document.getElementById('frequencyRange').value = this.selectedSource.frequency;
+        });
+    }
+
+    // Method to update the wave source dropdown menu
+    updateWaveSourceSelect() {
+        const waveSourceSelect = document.getElementById('waveSourceSelect');
+        waveSourceSelect.innerHTML = '';
+        this.waveSources.forEach((source, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.text = `Source (${source.x}, ${source.y})`;
+            waveSourceSelect.appendChild(option);
+        });
     }
 
     // Method to change the drawing mode and manage UI button states
@@ -149,7 +172,6 @@ export class Simulation {
 
     // Method to hide the current button and show the 'Generate Waves' button
     replaceButton(buttonId) {
-        this.originalButtonId = buttonId;
         const originalButton = document.getElementById(buttonId);
         originalButton.classList.add('hidden');
 
@@ -174,11 +196,6 @@ export class Simulation {
         const generateWavesButton = document.getElementById('generateWaves');
         if (generateWavesButton) {
             generateWavesButton.parentNode.removeChild(generateWavesButton);
-        }
-
-        if (this.originalButtonId) {
-            const originalButton = document.getElementById(this.originalButtonId);
-            originalButton.classList.remove('hidden');
         }
 
         this.drawMode = 'waves';
@@ -246,6 +263,11 @@ export class Simulation {
             this.ctx.arc(x, y, radius, 0, 2 * Math.PI);
             this.ctx.fill();
         });
+
+        // Highlight the selected wave source with a yellow circle
+        if (this.selectedSource) {
+            this.highlightSelectedSource();
+        }
     }
 
     // Method to update the simulation state and redraw
@@ -264,5 +286,18 @@ export class Simulation {
         this.draw();
         // Request the next frame in the animation loop
         requestAnimationFrame(() => this.animate());
+    }
+
+    // Method to draw a highlight around the selected wave source
+    highlightSelectedSource() {
+        const x = (this.selectedSource.x / this.cols) * this.canvas.width;
+        const y = (this.selectedSource.y / this.rows) * this.canvas.height;
+        const radius = Math.min(this.canvas.width / this.grid.cols, this.canvas.height / this.grid.rows);
+
+        this.ctx.strokeStyle = 'yellow';
+        this.ctx.lineWidth = 3;
+        this.ctx.beginPath();
+        this.ctx.arc(x, y, radius, 0, 2 * Math.PI);
+        this.ctx.stroke();
     }
 }
